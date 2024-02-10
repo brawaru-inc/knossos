@@ -3,6 +3,9 @@ name: Crowdin (cleanup)
 on:
   delete:
 
+concurrency:
+  group: i18n-management
+
 jobs:
   preflight_check:
     name: 'Pre-flight check'
