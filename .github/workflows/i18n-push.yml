@@ -1,8 +1,7 @@
 name: Crowdin (push)
 
 on:
-  push:
-    branches: [master]
+  push: {}
   workflow_dispatch: {}
 
 concurrency:
