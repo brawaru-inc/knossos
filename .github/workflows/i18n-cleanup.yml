@@ -49,7 +49,7 @@ jobs:
         id: crowdin-branch-exists
         uses: GuillaumeFalourd/branch-exists@v1
         with:
-          branch: ${{ format('crowdin-pull/{}', steps.normal-branch-name.outputs.normal_branch_name) }}
+          branch: ${{ format('crowdin-pull/{0}', steps.normal-branch-name.outputs.normal_branch_name) }}
     outputs:
       ready: ${{ steps.check.outputs.flight_ok == 'true' && steps.crowdin-branch-exists.outputs.exists == 'true' }}
       branch-name: ${{ steps.normal-branch-name.outputs.normal_branch_name }}
