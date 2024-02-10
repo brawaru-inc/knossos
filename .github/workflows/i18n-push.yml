@@ -48,7 +48,7 @@ jobs:
         id: crowdin-branch-exists
         uses: GuillaumeFalourd/branch-exists@v1
         with:
-          branch: ${{ format('crowdin-sync/{0}', github.ref_name) }}
+          branch: ${{ format('crowdin-pull/{0}', github.ref_name) }}
 
       - name: Checkout
         id: checkout

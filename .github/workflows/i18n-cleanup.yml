@@ -10,7 +10,7 @@ jobs:
     concurrency:
       group: i18n-cleanup:${{ github.event.ref }}
       cancel-in-progress: true
-    if: github.event.ref_type == 'branch' && !startsWith(github.event.ref, 'ref/heads/crowdin-sync/')
+    if: github.event.ref_type == 'branch' && !startsWith(github.event.ref, 'ref/heads/crowdin-pull/')
     steps:
       - name: Preflight check
         id: check
@@ -49,7 +49,7 @@ jobs:
         id: crowdin-branch-exists
         uses: GuillaumeFalourd/branch-exists@v1
         with:
-          branch: ${{ format('crowdin-sync/{}', steps.normal-branch-name.outputs.normal_branch_name) }}
+          branch: ${{ format('crowdin-pull/{}', steps.normal-branch-name.outputs.normal_branch_name) }}
     outputs:
       ready: ${{ steps.check.outputs.flight_ok == 'true' && steps.crowdin-branch-exists.outputs.exists == 'true' }}
       branch-name: ${{ steps.normal-branch-name.outputs.normal_branch_name }}
@@ -79,4 +79,4 @@ jobs:
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
       - name: Delete Git branch
         shell: bash
-        run: "git push origin :crowdin-sync/${{ needs.preflight_check.outputs.branch-name }}"
+        run: "git push origin :crowdin-pull/${{ needs.preflight_check.outputs.branch-name }}"
