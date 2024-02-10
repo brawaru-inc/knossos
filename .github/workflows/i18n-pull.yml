@@ -53,7 +53,7 @@ jobs:
   pull_translations:
     name: 'Pull translations from Crowdin'
     needs: preflight_check
-    if: always() && !failure() && !cancelled() && needs.preflight_check.outputs.ready == 'true'
+    if: needs.preflight_check.outputs.ready == 'true'
     runs-on: ubuntu-22.04
     concurrency:
       group: i18n-pull:${{ github.ref }}
@@ -117,7 +117,7 @@ jobs:
           commit-message: 'New translations from Crowdin (${{ steps.branch-name.outputs.branch_name }})'
           branch: crowdin-pull/${{ steps.branch-name.outputs.branch_name }}
           add-paths: locales
-          author: "${{ steps.git-author.outputs.name }} <${{ steps.git-author.outputs.email }}>"
-          committer: "${{ steps.git-author.outputs.name }} <${{ steps.git-author.outputs.email }}>"
+          author: '${{ steps.git-author.outputs.name }} <${{ steps.git-author.outputs.email }}>'
+          committer: '${{ steps.git-author.outputs.name }} <${{ steps.git-author.outputs.email }}>'
           token: ${{ secrets.CROWDIN_GH_TOKEN }}
           git-token: ${{ secrets.CROWDIN_GH_TOKEN }}
