@@ -55,20 +55,37 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Get branch name from ref
         id: branch-name
         shell: bash
         run: echo "safe_branch_name=$(echo "${{ github.event.ref }}" | sed -e "s/[\\\\/\\:*?\"<>|]/_/g")" >> "$GITHUB_OUTPUT"
-      - name: Delete translations branch
-        uses: crowdin/github-action@v1
-        with:
-          command: 'branch'
-          command_args: 'delete "[${{ github.repository_owner }}.${{ github.event.repository.name }}] ${{ steps.branch-name.outputs.safe_branch_name }}"'
-        env:
-          CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_PROJECT_ID }}
-          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      # Crowdin GitHub Action is currently broken and doesn't properly run commands that contain spaces
+      # See https://github.com/crowdin/github-action/issues/192
+      - name: Download Crowdin CLI
+        shell: bash
+        run: |
+          wget -qO - https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
+          echo "deb https://artifacts.crowdin.com/repo/deb/ /" > /etc/apt/sources.list.d/crowdin.list
+          sudo apt-get update && sudo apt-get install -y crowdin3
+
+      - name: Delete translations branch on Crowdin
+        shell: bash
+        run: 'crowdin branch delete "[${{ github.repository_owner }}.${{ github.event.repository.name }}] ${{ steps.branch-name.outputs.safe_branch_name }}"'
         continue-on-error: true
+
+      # - name: Delete translations branch on Crowdin
+      #   uses: crowdin/github-action@v1
+      #   with:
+      #     command: 'branch'
+      #     command_args: 'delete "[${{ github.repository_owner }}.${{ github.event.repository.name }}] ${{ steps.branch-name.outputs.safe_branch_name }}"'
+      #   env:
+      #     CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_PROJECT_ID }}
+      #     CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+      #   continue-on-error: true
+
       - name: Delete Git branch
         shell: bash
-        run: "git push origin :crowdin-pull/${{ github.event.ref }}"
+        run: 'git push origin :crowdin-pull/${{ github.event.ref }}'
         continue-on-error: true

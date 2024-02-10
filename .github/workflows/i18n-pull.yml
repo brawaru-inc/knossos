@@ -117,7 +117,7 @@ jobs:
           commit-message: 'New translations from Crowdin (${{ steps.branch-name.outputs.branch_name }})'
           branch: crowdin-pull/${{ steps.branch-name.outputs.branch_name }}
           add-paths: locales
-          author: "${{ steps.git-author.outputs.name }} <${{ steps.git-author.outputs.email }}>"
-          committer: "${{ steps.git-author.outputs.name }} <${{ steps.git-author.outputs.email }}>"
+          author: '${{ steps.git-author.outputs.name }} <${{ steps.git-author.outputs.email }}>'
+          committer: '${{ steps.git-author.outputs.name }} <${{ steps.git-author.outputs.email }}>'
           token: ${{ secrets.CROWDIN_GH_TOKEN }}
           git-token: ${{ secrets.CROWDIN_GH_TOKEN }}
