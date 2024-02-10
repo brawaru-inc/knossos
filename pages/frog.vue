@@ -9,11 +9,11 @@ const messages = defineMessages({
   },
   frogDescription: {
     id: 'frog',
-    defaultMessage: "🐸 You've been frogged! 🐸",
+    defaultMessage: "You've been frogged! 🐸",
   },
   frogAltText: {
     id: 'frog.altText',
-    defaultMessage: 'A very cool photorealistic painting of a frog labyrinth',
+    defaultMessage: 'A photorealistic painting of a frog labyrinth',
   },
   frogSinceOpened: {
     id: 'frog.sinceOpened',
