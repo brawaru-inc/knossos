@@ -53,7 +53,7 @@ jobs:
   pull_translations:
     name: 'Pull translations from Crowdin'
     needs: preflight_check
-    if: always() && !failure() && !cancelled() && needs.preflight_check.outputs.ready == 'true'
+    if: needs.preflight_check.outputs.ready == 'true'
     runs-on: ubuntu-22.04
     concurrency:
       group: i18n-pull:${{ github.ref }}

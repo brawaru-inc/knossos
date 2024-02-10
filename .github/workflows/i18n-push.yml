@@ -78,7 +78,7 @@ jobs:
   push_translations:
     name: Push sources to Crowdin
     needs: preflight_check
-    if: always() && !failure() && !cancelled() && needs.preflight_check.outputs.ready == 'true'
+    if: needs.preflight_check.outputs.ready == 'true'
     concurrency:
       group: i18n-push:${{ github.ref }}
       cancel-in-progress: true
