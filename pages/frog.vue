@@ -22,7 +22,7 @@ const messages = defineMessages({
   frogFroggedPeople: {
     id: 'frog.froggedPeople',
     defaultMessage:
-      '{count, plural, one {{count} more person} other {{count} more people}} were also frogged!',
+      'So far, {count, plural, one {{count} person} other {{count} people}} were frogged.',
   },
 })
 
