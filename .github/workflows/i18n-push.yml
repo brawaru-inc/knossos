@@ -43,9 +43,16 @@ jobs:
           CROWDIN_PROJECT_ID_DEFINED: ${{ vars.CROWDIN_PROJECT_ID != '' }}
           CROWDIN_PERSONAL_TOKEN_DEFINED: ${{ secrets.CROWDIN_PERSONAL_TOKEN != '' }}
 
+      - name: Check that Crowdin branch exists
+        if: github.event_name != 'workflow_dispatch' && github.ref_name != github.event.repository.default_branch
+        id: crowdin-branch-exists
+        uses: GuillaumeFalourd/branch-exists@v1
+        with:
+          branch: ${{ format('crowdin-sync/{0}', github.ref_name) }}
+
       - name: Checkout
         id: checkout
-        if: github.event_name != 'workflow_dispatch' && steps.check.outputs.flight_ok == 'true'
+        if: github.event_name != 'workflow_dispatch' && steps.check.outputs.flight_ok == 'true' && (steps.crowdin-branch-exists.outcome == 'skipped' || steps.crowdin-branch-exists.outputs.exists == 'true')
         uses: actions/checkout@v4
 
       - name: Confirm push necessity
