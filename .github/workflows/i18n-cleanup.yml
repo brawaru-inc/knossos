@@ -1,0 +1,82 @@
+name: Crowdin (cleanup)
+
+on:
+  delete:
+
+jobs:
+  preflight_check:
+    name: 'Pre-flight check'
+    runs-on: ubuntu-22.04
+    concurrency:
+      group: i18n-cleanup:${{ github.event.ref }}
+      cancel-in-progress: true
+    if: github.event.ref_type == 'branch' && !startsWith(github.event.ref, 'ref/heads/crowdin-sync/')
+    steps:
+      - name: Preflight check
+        id: check
+        run: |
+          PREFLIGHT_CHECK_RESULT=true
+
+          function flight_failure () {
+            if [ "$PREFLIGHT_CHECK_RESULT" = true ]; then
+              echo "One or more pre-flight checks failed!"
+              echo ""
+              PREFLIGHT_CHECK_RESULT=false
+            fi
+            echo "- $1"
+          }
+
+          if [ "$CROWDIN_PROJECT_ID_DEFINED" != true ]; then
+            flight_failure "CROWDIN_PROJECT_ID variable is not defined (required to push)"
+          fi
+
+          if [ "$CROWDIN_PERSONAL_TOKEN_DEFINED" != true ]; then
+            flight_failure "CROWDIN_PERSONAL_TOKEN secret is not defined (required to push)"
+          fi
+
+          echo "flight_ok=$PREFLIGHT_CHECK_RESULT" >> "$GITHUB_OUTPUT"
+        env:
+          CROWDIN_PROJECT_ID_DEFINED: ${{ vars.CROWDIN_PROJECT_ID != '' }}
+          CROWDIN_PERSONAL_TOKEN_DEFINED: ${{ secrets.CROWDIN_PERSONAL_TOKEN != '' }}
+
+      - name: Get normal branch name
+        id: normal-branch-name
+        shell: bash
+        run: echo "normal_branch_name=${DELETION_REF#ref/heads/}" > "$GITHUB_OUTPUT"
+
+      - name: Check that Crowdin branch exists
+        if: github.event_name != 'workflow_dispatch' && github.ref_name != github.event.repository.default_branch
+        id: crowdin-branch-exists
+        uses: GuillaumeFalourd/branch-exists@v1
+        with:
+          branch: ${{ format('crowdin-sync/{}', steps.normal-branch-name.outputs.normal_branch_name) }}
+    outputs:
+      ready: ${{ steps.check.outputs.flight_ok == 'true' && steps.crowdin-branch-exists.outputs.exists == 'true' }}
+      branch-name: ${{ steps.normal-branch-name.outputs.normal_branch_name }}
+  delete_crowdin_branch:
+    name: 'Delete Crowdin branch'
+    runs-on: ubuntu-22.04
+    needs: preflight_check
+    if: needs.preflight_check.outputs.ready == 'true'
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get safe branch name
+        id: branch-name
+        shell: bash
+        run: echo "safe_branch_name=$(echo "$BRANCH_NAME" | sed -e "s/[\\\\/\\:*?\"<>|]/_/g")" >> "$GITHUB_OUTPUT"
+        env:
+          BRANCH_NAME: ${{ needs.preflight_check.outputs.branch-name }}
+      - name: Delete translations branch
+        uses: crowdin/github-action@v1
+        with:
+          command: 'branch'
+          command_args: 'delete "[${{ github.repository_owner }}.${{ github.event.repository.name }}] ${{ steps.branch-name.outputs.safe_branch_name }}"'
+        env:
+          CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+      - name: Delete Git branch
+        shell: bash
+        run: "git push origin :crowdin-sync/${{ needs.preflight_check.outputs.branch-name }}"
