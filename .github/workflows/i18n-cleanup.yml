@@ -1,7 +1,6 @@
 name: Crowdin (cleanup)
 
-on:
-  delete:
+on: [delete]
 
 concurrency:
   group: i18n-management
