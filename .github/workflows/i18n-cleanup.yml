@@ -79,7 +79,9 @@ jobs:
       - name: Delete translations branch on Crowdin
         shell: bash
         run: |
-          "$PWD/.crowdin/${{ env.CROWDIN_CLI_VERSION }}/crowdin" branch delete "[${{ github.repository_owner }}.${{ github.event.repository.name }}] ${{ steps.branch-name.outputs.safe_branch_name }}"
+          CROWDIN_CLI_BIN="$PWD/.crowdin/${{ env.CROWDIN_CLI_VERSION }}/crowdin"
+          chmod +x "$CROWDIN_CLI_BIN"
+          "$CROWDIN_CLI_BIN" branch delete "[${{ github.repository_owner }}.${{ github.event.repository.name }}] ${{ steps.branch-name.outputs.safe_branch_name }}"
         continue-on-error: true
         env:
           CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_PROJECT_ID }}
