@@ -67,7 +67,7 @@ jobs:
         shell: bash
         run: |
           wget -qO - https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
-          echo "deb https://artifacts.crowdin.com/repo/deb/ /" > /etc/apt/sources.list.d/crowdin.list
+          echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee /etc/apt/sources.list.d/crowdin.list > /dev/null
           sudo apt-get update && sudo apt-get install -y crowdin3
 
       - name: Delete translations branch on Crowdin
