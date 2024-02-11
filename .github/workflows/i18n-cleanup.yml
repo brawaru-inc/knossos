@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Preflight check
         id: check
+        shell: bash
         run: |
           PREFLIGHT_CHECK_RESULT=true
 
@@ -66,9 +67,8 @@ jobs:
       - name: Download Crowdin CLI
         shell: bash
         run: |
-          wget -qO - https://artifacts.crowdin.com/repo/GPG-KEY-crowdin | sudo apt-key add -
-          echo "deb https://artifacts.crowdin.com/repo/deb/ /" | sudo tee /etc/apt/sources.list.d/crowdin.list > /dev/null
-          sudo apt-get update && sudo apt-get install -y crowdin3
+          wget https://artifacts.crowdin.com/repo/deb/crowdin3.deb -O crowdin.deb
+          sudo dpkg -i crowdin.deb
 
       - name: Delete translations branch on Crowdin
         shell: bash
