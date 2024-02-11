@@ -493,7 +493,7 @@ const navMenuMessages = defineMessages({
 const messages = defineMessages({
   visitYourProfile: {
     id: 'layout.label.visit-your-profile',
-    defaultMessage: 'Visit your profile',
+    defaultMessage: 'Visit my profile',
   },
   toggleMenu: {
     id: 'layout.menu-toggle.action',
