@@ -67,6 +67,12 @@ jobs:
 
       # Crowdin GitHub Action is currently broken and doesn't properly run commands that contain spaces
       # See https://github.com/crowdin/github-action/issues/192
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
       - name: Download Crowdin CLI
         uses: robinraju/release-downloader@v1.9
         with:
@@ -79,9 +85,8 @@ jobs:
       - name: Delete translations branch on Crowdin
         shell: bash
         run: |
-          CROWDIN_CLI_BIN="$PWD/.crowdin/${{ env.CROWDIN_CLI_VERSION }}/crowdin"
-          chmod +x "$CROWDIN_CLI_BIN"
-          "$CROWDIN_CLI_BIN" branch delete "[${{ github.repository_owner }}.${{ github.event.repository.name }}] ${{ steps.branch-name.outputs.safe_branch_name }}"
+          CROWDIN_CLI_JAR="$PWD/.crowdin/${{ env.CROWDIN_CLI_VERSION }}/crowdin-cli.jar"
+          java -jar "$CROWDIN_CLI_JAR" branch delete "[${{ github.repository_owner }}.${{ github.event.repository.name }}] ${{ steps.branch-name.outputs.safe_branch_name }}"
         continue-on-error: true
         env:
           CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_PROJECT_ID }}
