@@ -74,6 +74,9 @@ jobs:
         shell: bash
         run: 'crowdin branch delete "[${{ github.repository_owner }}.${{ github.event.repository.name }}] ${{ steps.branch-name.outputs.safe_branch_name }}"'
         continue-on-error: true
+        env:
+          CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_PROJECT_ID }}
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       # - name: Delete translations branch on Crowdin
       #   uses: crowdin/github-action@v1
