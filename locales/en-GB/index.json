@@ -1,8 +1,14 @@
 {
   "frog": {
-    "message": "🐸 You've been frogged, mate 🐸"
+    "message": "You've been frogged! 🐸"
   },
   "frog.altText": {
-    "message": "A meticulously crafted whimsical tapestry, woven with light and shadow, where a playful labyrinth masquerades as a proud amphibian"
+    "message": "A whimsical tapestry, woven with light and shadow, where a playful labyrinth masquerades as a proud amphibian"
+  },
+  "frog.froggedPeople": {
+    "message": "So far, {count, plural, one {{count} peepo} other {{count} peepos}} were frogged."
+  },
+  "layout.label.visit-your-profile": {
+    "message": "Visit me profile"
   }
 }
